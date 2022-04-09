@@ -21,10 +21,10 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' no
 setup(
     name='gpu-overseer',
     description='Telegram notifier for GPU availability status.',
-    version='0.0.2',
+    version='0.0.6',
     packages=find_packages(),  # list of all packages
     install_requires=install_requires,
-    python_requires='>=3.9',
+    python_requires='>=3.6',
     entry_points='''
         [console_scripts]
         overseer=notifier.__main__:main
@@ -40,6 +40,9 @@ setup(
     author_email='viktoroo.sch@gmail.com',
     classifiers=[
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.9",
-    ]
+    ],
+    include_package_data=True,
 )
