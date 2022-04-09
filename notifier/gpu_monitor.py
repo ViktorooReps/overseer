@@ -1,28 +1,77 @@
+from collections import defaultdict
+from pwd import getpwall
 from time import sleep
-from typing import Callable
+from typing import Callable, NamedTuple, Tuple
 
-from nvitop import Device
+from nvitop import Device, GpuProcess
+
+
+class GPUStatus(NamedTuple):
+    total_memory: int
+    occupied_memory: Tuple[int, ...]
+    occupied_by: Tuple[str, ...]
+
+
+def _collect_process_info(process: GpuProcess) -> Tuple[str, int]:
+    return process.username(), process.gpu_memory()
+
+
+def _collect_gpu_status() -> Tuple[GPUStatus, ...]:
+    devices = Device.all()
+
+    gpu_statuses = []
+    for device_idx, device in enumerate(devices):
+        users_memory_consumption = defaultdict(int)
+        for username, memory in map(_collect_process_info, device.processes().values()):
+            users_memory_consumption[username] += memory
+
+        total_memory = device.memory_total()
+        occupied_memory = []
+        occupied_by = []
+        for username, total_memory_consumed in users_memory_consumption.items():
+            occupied_by.append(username)
+            occupied_memory.append(total_memory)
+
+        gpu_statuses.append(GPUStatus(total_memory=total_memory, occupied_memory=tuple(occupied_memory), occupied_by=tuple(occupied_by)))
+
+    return tuple(gpu_statuses)
+
+
+def _status_considerably_changed(previous_status: Tuple[GPUStatus, ...], current_status: Tuple[GPUStatus, ...]) -> bool:
+    previous_total_memory = tuple(gpu_status.total_memory for gpu_status in previous_status)
+    current_total_memory = tuple(gpu_status.total_memory for gpu_status in current_status)
+
+    previous_users = tuple(tuple(sorted(gpu_status.occupied_by)) for gpu_status in previous_status)
+    current_users = tuple(tuple(sorted(gpu_status.occupied_by)) for gpu_status in current_status)
+
+    def relative_memory_change(previous_gpu_status: GPUStatus, current_gpu_status: GPUStatus) -> float:
+        return (sum(current_gpu_status.occupied_memory) - sum(previous_gpu_status.occupied_memory)) / previous_gpu_status.total_memory
+
+    memory_usage_change = tuple(relative_memory_change(p_gpu, c_gpu) for p_gpu, c_gpu in zip(previous_status, current_status))
+    considerable_memory_usage_change = any(abs(change) > 0.5 for change in memory_usage_change)
+
+    return considerable_memory_usage_change or current_total_memory != previous_total_memory or current_users != previous_users
+
+
+def _collect_message(status: Tuple[GPUStatus, ...]) -> str:
+    username_descriptions = {pw.pw_name: pw.pw_gecos for pw in getpwall()}
+
+    msg = 'Status changed!'
+    for gpu_idx, gpu_status in enumerate(status):
+        msg += f'\nGPU{gpu_idx} ({sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}Mb):'
+        for username, memory in zip(gpu_status.occupied_by, gpu_status.occupied_memory):
+            msg += f'\n\t{username} ({username_descriptions[username]}), {memory}Mb'
+
+    return msg
 
 
 def run_monitoring(logger: Callable[[str], None], interval: int = 1) -> None:
-    prev_status = [None]
+    previous_status = tuple()
     while True:
-        devices = Device.all()
-        curr_status = [False] * len(devices)
-        for device_idx, device in enumerate(devices):
-            if not len(device.processes()):
-                curr_status[device_idx] = True
-
-        if tuple(curr_status) != tuple(prev_status):
-            msg = f'Status changed!\n'
-            for device_idx, device_status in enumerate(curr_status):
-                if device_status:
-                    msg += f'GPU{device_idx}: vacant!\n'
-                else:
-                    process = list(devices[device_idx].processes().values())[0]
-                    username = process.username()
-                    msg += f'GPU{device_idx}: occupied by {username}\n'
+        current_status = _collect_gpu_status()
+        if _status_considerably_changed(previous_status, current_status):
+            msg = _collect_message(current_status)
             logger(msg)
+            previous_status = current_status
 
-        prev_status = curr_status
         sleep(interval)
