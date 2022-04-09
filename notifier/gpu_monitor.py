@@ -62,15 +62,15 @@ def _collect_message(status: Tuple[GPUStatus, ...]) -> str:
     msg = 'Status changed!'
     for gpu_idx, gpu_status in enumerate(status):
         utilization = (sum(gpu_status.occupied_memory) / gpu_status.total_memory) * 100
-        msg += f'\n\n*GPU{gpu_idx}* `{sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}` Mb ({utilization:.2f}%):'
+        msg += f'\n\n<b>GPU{gpu_idx}</b> <code>{sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}</code> Mb ({utilization:.2f}%):'
         if not len(gpu_status.occupied_by):
-            msg += '\n    vacant\!'
+            msg += '\n    vacant!'
         for username, memory in zip(gpu_status.occupied_by, gpu_status.occupied_memory):
             description = username_descriptions[username].replace(',,,', '')
             if len(description):
-                msg += f'\n    {username} ({description}), `{memory}` Mb'
+                msg += f'\n    {username} ({description}), <code>{memory}</code> Mb'
             else:
-                msg += f'\n    {username}, `{memory}` Mb'
+                msg += f'\n    {username}, <code>{memory}</code> Mb'
 
     return msg
 
@@ -82,7 +82,6 @@ def run_monitoring(logger: Callable[[str], None], interval: int = 1) -> None:
         if _status_considerably_changed(previous_status, current_status):
             msg = _collect_message(current_status)
             logger(msg)
-            print('logged')
             previous_status = current_status
 
         sleep(interval)
