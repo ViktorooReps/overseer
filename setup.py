@@ -19,7 +19,7 @@ install_requires = [x.strip() for x in all_reqs if ('git+' not in x) and (not x.
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
 
 setup(
-    name='overseer',
+    name='gpu-overseer',
     description='Telegram notifier for GPU availability status.',
     version='0.0.1',
     packages=find_packages(),  # list of all packages
