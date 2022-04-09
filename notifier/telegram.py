@@ -48,7 +48,7 @@ class TelegramNotifier(object):
         for chat_id in self._chat_ids:
             data = {'chat_id': chat_id, 'text': message, 'parse_mode': 'MarkdownV2'}
             try:
-                requests.get(query, data=data, timeout=10)
+                print(requests.get(query, data=data, timeout=10).json())
             except HTTPException:
                 pass
 

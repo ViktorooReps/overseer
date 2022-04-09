@@ -82,6 +82,7 @@ def run_monitoring(logger: Callable[[str], None], interval: int = 1) -> None:
         if _status_considerably_changed(previous_status, current_status):
             msg = _collect_message(current_status)
             logger(msg)
+            print('logged')
             previous_status = current_status
 
         sleep(interval)
