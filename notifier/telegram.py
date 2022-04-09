@@ -46,7 +46,7 @@ class TelegramNotifier(object):
 
         query = self._query_constructor(API.SEND_MESSAGE)
         for chat_id in self._chat_ids:
-            data = {"chat_id": chat_id, "text": message}
+            data = {'chat_id': chat_id, 'text': message, 'parse_mode': 'MarkdownV2'}
             try:
                 requests.get(query, data=data, timeout=10)
             except HTTPException:
