@@ -19,18 +19,21 @@ def _collect_process_info(process: GpuProcess) -> Tuple[str, int]:
 def _collect_gpu_status() -> Tuple[GPUStatus, ...]:
     devices = Device.all()
 
+    def to_mb(_bytes: int) -> int:
+        return _bytes // 1024 // 1024
+
     gpu_statuses = []
     for device_idx, device in enumerate(devices):
         users_memory_consumption = defaultdict(int)
         for username, memory in map(_collect_process_info, device.processes().values()):
             users_memory_consumption[username] += memory
 
-        total_memory = device.memory_total()
+        total_memory = to_mb(device.memory_total())
         occupied_memory = []
         occupied_by = []
         for username, total_memory_consumed in users_memory_consumption.items():
             occupied_by.append(username)
-            occupied_memory.append(total_memory)
+            occupied_memory.append(to_mb(total_memory))
 
         gpu_statuses.append(GPUStatus(total_memory=total_memory, occupied_memory=tuple(occupied_memory), occupied_by=tuple(occupied_by)))
 
@@ -60,7 +63,7 @@ def _collect_message(status: Tuple[GPUStatus, ...]) -> str:
     for gpu_idx, gpu_status in enumerate(status):
         msg += f'\nGPU{gpu_idx} ({sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}Mb):'
         for username, memory in zip(gpu_status.occupied_by, gpu_status.occupied_memory):
-            msg += f'\n\t{username} ({username_descriptions[username]}), {memory}Mb'
+            msg += f'\n\t\t{username} ({username_descriptions[username]}), {memory}Mb'
 
     return msg
 
