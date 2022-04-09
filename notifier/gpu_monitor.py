@@ -62,9 +62,9 @@ def _collect_message(status: Tuple[GPUStatus, ...]) -> str:
     msg = 'Status changed!'
     for gpu_idx, gpu_status in enumerate(status):
         utilization = (sum(gpu_status.occupied_memory) / gpu_status.total_memory) * 100
-        msg += f'\n\n**GPU{gpu_idx}** `{sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}` Mb ({utilization:.2f}%):'
+        msg += f'\n\n*GPU{gpu_idx}* `{sum(gpu_status.occupied_memory)}/{gpu_status.total_memory}` Mb ({utilization:.2f}%):'
         if not len(gpu_status.occupied_by):
-            msg += '\n    vacant!'
+            msg += '\n    vacant\\!'
         for username, memory in zip(gpu_status.occupied_by, gpu_status.occupied_memory):
             description = username_descriptions[username].replace(',,,', '')
             if len(description):
