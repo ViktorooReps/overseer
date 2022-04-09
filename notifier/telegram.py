@@ -65,7 +65,7 @@ class TelegramNotifier(object):
                     query_successful = False
                     continue
 
-                new_updates = response.json().get('results', [])
+                new_updates = response.json().get('result', [])
                 if not len(new_updates):
                     query_successful = False
                     continue
@@ -81,7 +81,7 @@ class TelegramNotifier(object):
 
     def _update_chat_ids(self) -> None:
         updates = self._fetch_all_available_updates()
-        messages = [update['message'] for update in updates if 'message' in updates]
+        messages = [update['message'] for update in updates if 'message' in update]
         new_chat_ids = {message['chat']['id'] for message in messages}
 
         self._chat_ids.update(new_chat_ids)
