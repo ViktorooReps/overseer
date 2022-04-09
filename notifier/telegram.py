@@ -39,6 +39,8 @@ class TelegramNotifier(object):
         with open(DATA_PATH, 'wb') as ids_file:
             pickle.dump(synchronized_ids, ids_file, pickle.HIGHEST_PROTOCOL)
 
+        self._chat_ids = synchronized_ids
+
     def notify(self, message: str) -> None:
         self._update_chat_ids()
 
