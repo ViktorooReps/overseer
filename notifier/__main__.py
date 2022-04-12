@@ -6,7 +6,7 @@ import pkg_resources
 from notifier.gpu_monitor import run_monitoring
 from notifier.telegram import TelegramNotifier
 
-__version__ = pkg_resources.require('overseer')[0].version
+__version__ = pkg_resources.require('gpu-overseer')[0].version
 API_TOKEN_ENV = 'TELEGRAM_API_TOKEN'
 API_URL_ENV = 'TELEGRAM_API_URL'
 
