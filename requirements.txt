@@ -1,4 +1,4 @@
-click~=8.1.2
-setuptools~=60.9.3
-requests~=2.27.1
-nvitop~=0.5.4
+click
+setuptools
+requests
+nvitop
