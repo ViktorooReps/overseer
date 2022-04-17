@@ -78,10 +78,13 @@ def _collect_message(status: Tuple[GPUStatus, ...]) -> str:
 def run_monitoring(logger: Callable[[str], None], interval: int = 1) -> None:
     previous_status = tuple()
     while True:
-        current_status = _collect_gpu_status()
-        if _status_considerably_changed(previous_status, current_status):
-            msg = _collect_message(current_status)
-            logger(msg)
-            previous_status = current_status
+        try:
+            current_status = _collect_gpu_status()
+            if _status_considerably_changed(previous_status, current_status):
+                msg = _collect_message(current_status)
+                logger(msg)
+                previous_status = current_status
+        except Exception:
+            pass
 
         sleep(interval)
