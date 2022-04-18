@@ -2,7 +2,6 @@ import os
 
 import click as click
 import pkg_resources
-from click_option_group import optgroup
 
 from notifier.gpu_monitor import run_monitoring
 from notifier.telegram import TelegramNotifier
