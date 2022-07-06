@@ -1,3 +1,4 @@
+import logging
 import os
 
 import click as click
@@ -20,10 +21,15 @@ def get_telegram_notifier() -> TelegramNotifier:
     return TelegramNotifier(telegram_url=os.environ[API_URL_ENV], api_token=os.environ[API_TOKEN_ENV])
 
 
-@click.group()
-@click.option('--version')
-def cli(version):
-    pass
+@click.group(invoke_without_command=True)
+@click.option('-v', '--version', is_flag=True, help='Print overseer version.')
+@click.option('--debug', is_flag=True, help='Set logging level to DEBUG.')
+def cli(version: bool, debug: bool):
+    logging.getLogger().setLevel(logging.DEBUG if debug else logging.INFO)
+    if version:
+        print(f'Overseer {__version__}')
+
+    logging.debug('Overseer started')
 
 
 @cli.command()

@@ -1,3 +1,4 @@
+import logging
 import pickle
 from enum import Enum
 from http import HTTPStatus
@@ -49,8 +50,8 @@ class TelegramNotifier(object):
             data = {'chat_id': chat_id, 'text': message, 'parse_mode': 'HTML'}
             try:
                 requests.get(query, data=data, timeout=10)
-            except HTTPException:
-                pass
+            except HTTPException as e:
+                logging.debug('Users notification failed!', exc_info=e, extra={'query_data': data})
 
     def _fetch_all_available_updates(self) -> Tuple[dict, ...]:
         updates = []
@@ -59,8 +60,8 @@ class TelegramNotifier(object):
         curr_offset = 0
         query_successful = True
         while query_successful:
+            data = {"offset": curr_offset}
             try:
-                data = {"offset": curr_offset}
                 response = requests.get(query, data=data, timeout=10)
 
                 if response.status_code != HTTPStatus.OK:
@@ -76,8 +77,9 @@ class TelegramNotifier(object):
                 curr_offset = max(new_update_ids) + 1
                 updates.extend(new_updates)
 
-            except HTTPException:
+            except HTTPException as e:
                 query_successful = False
+                logging.debug('Updates fetching failed!', exc_info=e, extra={'query_data': data})
 
         return tuple(updates)
 

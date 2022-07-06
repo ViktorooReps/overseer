@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from pwd import getpwall
 from time import sleep
@@ -84,7 +85,7 @@ def run_monitoring(logger: Callable[[str], None], interval: int = 1) -> None:
                 msg = _collect_message(current_status)
                 logger(msg)
                 previous_status = current_status
-        except Exception:
-            pass
+        except Exception as e:
+            logging.debug('Exception occurred during GPU status evaluation!', exc_info=e)
 
         sleep(interval)
