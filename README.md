@@ -1,5 +1,5 @@
 # Overseer
-Overseer is a lightweight command-line tool for monitoring GPU memory usage and receiving real-time alerts via Telegram. Designed for researchers, developers, and system admins working with shared GPU servers. Overseer notifies you when GPUs become available or when processes start or stop. With a simple setup and minimal overhead, it helps you make the most of your computing resources without constantly checking `nvidia-smi`.
+Overseer is a lightweight command-line tool for monitoring GPU memory usage and receiving real-time alerts via Telegram. Designed for researchers, developers, and system admins working with shared or remote GPU servers. Overseer notifies you when GPUs become available or when processes start or stop. With a simple setup and minimal overhead, it helps you make the most of your computing resources without constantly checking `nvidia-smi`.
 
 ### Setup
 1. Set up your bot following instructions [here](https://core.telegram.org/bots#6-botfather), get your api token for it.
