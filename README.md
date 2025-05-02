@@ -1,12 +1,9 @@
-## Command-line utility for notifying changes in GPU memory utilization via Telegram bot
-
-### Why would you need this
-* to be notified when your GPU-intensive processes die or go up
-* to be notified when GPUs become available on a server
+# Overseer
+Overseer is a lightweight command-line tool for monitoring GPU memory usage and receiving real-time alerts via Telegram. Designed for researchers, developers, and system admins working with shared GPU servers. Overseer notifies you when GPUs become available or when processes start or stop. With a simple setup and minimal overhead, it helps you make the most of your computing resources without constantly checking `nvidia-smi`.
 
 ### Setup
 1. Set up your bot following instructions [here](https://core.telegram.org/bots#6-botfather), get your api token for it.
-2. Start a dialog with your bot on an account that you would like to get notifications to. **IMPORTANT**: you need to send any message to your bot (this is due to the Telegram bot API limitations) 
+2. Start a dialog with your bot on an account that you would like to get notifications to. **IMPORTANT**: you need to send some message to your bot (this is due to the Telegram bot API limitations) 
 3. Install `overseer`: `pip install gpu-overseer`
 4. Start monitoring your GPUs: `TELEGRAM_API_TOKEN=<your API token> TELEGRAM_API_URL=<relevant bot API URL> overseer monitor`
 
