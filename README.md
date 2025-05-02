@@ -1,3 +1,5 @@
+<img width="1035" alt="image" src="https://github.com/user-attachments/assets/fac58917-3d6f-4489-a09a-71410cb817ee" />
+
 # Overseer
 Overseer is a lightweight command-line tool for monitoring GPU memory usage and receiving real-time alerts via Telegram. Designed for researchers, developers, and system admins working with shared or remote GPU servers. Overseer notifies you when GPUs become available or when processes start or stop. With a simple setup and minimal overhead, it helps you make the most of your computing resources without constantly checking `nvidia-smi`.
 
